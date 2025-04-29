@@ -2,17 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Orchid\Screens\Examples\ExampleActionsScreen;
-use App\Orchid\Screens\Examples\ExampleCardsScreen;
-use App\Orchid\Screens\Examples\ExampleChartsScreen;
-use App\Orchid\Screens\Examples\ExampleFieldsAdvancedScreen;
-use App\Orchid\Screens\Examples\ExampleFieldsScreen;
-use App\Orchid\Screens\Examples\ExampleGridScreen;
-use App\Orchid\Screens\Examples\ExampleLayoutsScreen;
+use App\Orchid\Screens\Book\BookEditScreen;
+use App\Orchid\Screens\Book\BookListScreen;
 use App\Orchid\Screens\Examples\ExampleScreen;
-use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
 use App\Orchid\Screens\PlatformScreen;
-use App\Orchid\Screens\BookScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
 use App\Orchid\Screens\User\UserEditScreen;
@@ -36,11 +29,23 @@ use Tabuna\Breadcrumbs\Trail;
 Route::screen('/main', PlatformScreen::class)
     ->name('platform.main');
 
-Route::screen('/book', BookScreen::class)
+Route::screen('/books', BookListScreen::class)
     ->name('platform.book')
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.index')
         ->push(__('Book'), route('platform.book')));
+
+Route::screen('/books/create}', BookEditScreen::class)
+    ->name('platform.book.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.book')
+        ->push(__('Create'), route('platform.book.create')));
+
+Route::screen('/books/{book?}/edit', BookEditScreen::class)
+    ->name('platform.book.edit')
+    ->breadcrumbs(fn (Trail $trail, $book) => $trail
+        ->parent('platform.book')
+        ->push($book->title, route('platform.book.edit', $book)));
 
 // Platform > Profile
 Route::screen('profile', UserProfileScreen::class)

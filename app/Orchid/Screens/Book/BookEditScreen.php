@@ -1,19 +1,31 @@
 <?php
 
-namespace App\Orchid\Screens;
+namespace App\Orchid\Screens\Book;
 
+use App\Models\Book;
 use Orchid\Screen\Screen;
 
-class BookScreen extends Screen
+class BookEditScreen extends Screen
 {
+    /**
+     * Query data for the screen.
+     *
+     * @var Book
+     */
+    public $book;
+
     /**
      * Fetch data to be displayed on the screen.
      *
      * @return array
      */
-    public function query(): iterable
+    public function query(Book $book): iterable
     {
-        return [];
+        $book->load(['author']);
+
+        return [
+            'book' => $book,
+        ];
     }
 
     /**
@@ -23,7 +35,12 @@ class BookScreen extends Screen
      */
     public function name(): ?string
     {
-        return 'BookScreen';
+        return $this->book->exists ? 'Edit Book' : 'Create Book';
+    }
+
+    public function description(): ?string
+    {
+        return 'Book details';
     }
 
     /**
