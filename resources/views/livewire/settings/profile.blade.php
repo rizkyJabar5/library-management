@@ -77,13 +77,13 @@ new class extends Component {
         <form wire:submit="updateProfileInformation" class="mb-6 w-50">
             <div class="mb-4">
                 <label for="name" class="form-label">{{ __('Name') }}</label>
-                <input type="text" id="name" wire:model="name" class="form-control" placeholder="John Doe" required autofocus autocomplete="name">
+                <input type="text" id="name" wire:model.live="name" class="form-control" placeholder="John Doe" required autofocus autocomplete="name">
             </div>
 
             <div class="mb-4">
                 <label for="email" class="form-label">{{ __('Email') }}</label>
                 <div class="input-group">
-                    <input type="email" id="email" wire:model="email" class="form-control" placeholder="email@example.com" required autocomplete="email">
+                    <input type="email" id="email" wire:model.live="email" class="form-control" placeholder="email@example.com" required autocomplete="email">
                     <span class="input-group-text">@example.com</span>
                 </div>
 

@@ -46,17 +46,17 @@ new class extends Component {
         <form wire:submit="updatePassword" class="w-50">
             <div class="mb-3">
                 <label for="current_password" class="form-label">{{ __('Current password') }}</label>
-                <input type="password" id="current_password" wire:model="current_password" class="form-control" required autocomplete="current-password" />
+                <input type="password" id="current_password" wire:model.live="current_password" class="form-control" required autocomplete="current-password" />
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">{{ __('New password') }}</label>
-                <input type="password" id="password" wire:model="password" class="form-control" required autocomplete="new-password" />
+                <input type="password" id="password" wire:model.live="password" class="form-control" required autocomplete="new-password" />
             </div>
 
             <div class="mb-3">
                 <label for="password_confirmation" class="form-label">{{ __('Confirm Password') }}</label>
-                <input type="password" id="password_confirmation" wire:model="password_confirmation" class="form-control" required autocomplete="new-password" />
+                <input type="password" id="password_confirmation" wire:model.live="password_confirmation" class="form-control" required autocomplete="new-password" />
             </div>
 
             <div class="d-flex justify-content-between">

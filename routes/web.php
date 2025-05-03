@@ -18,4 +18,10 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/password', 'settings.password')->name('settings.password');
 });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('books', App\Livewire\Book\BookIndex::class)->name('books');
+    Route::get('books/create', App\Livewire\Book\CreateBook::class)->name('books.create');
+    Route::get('books/{book}/edit', App\Livewire\Book\EditBook::class)->name('books.edit');
+});
+
 require __DIR__ . '/auth.php';

@@ -20,7 +20,7 @@
         <div class="mb-6">
             <label for="email" class="form-label">{{ __('Email or Username') }}</label>
             <input
-                wire:model="email"
+                wire:model.live="email"
                 type="email"
                 class="form-control @error('email') is-invalid @enderror"
                 id="email"
@@ -45,7 +45,7 @@
             </div>
             <div class="input-group input-group-merge">
                 <input
-                    wire:model="password"
+                    wire:model.live="password"
                     type="password"
                     class="form-control @error('password') is-invalid @enderror"
                     id="password"
@@ -63,7 +63,7 @@
         <div class="mb-8">
             <div class="d-flex justify-content-between mt-8">
                 <div class="form-check mb-0 ms-2">
-                    <input wire:model="remember" type="checkbox" class="form-check-input" id="remember">
+                    <input wire:model.live="remember" type="checkbox" class="form-check-input" id="remember">
                     <label class="form-check-label" for="remember">
                         {{ __('Remember Me') }}
                     </label>

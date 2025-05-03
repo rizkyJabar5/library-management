@@ -56,7 +56,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <label class="form-label" for="password">{{ __('Password') }}</label>
             <div class="input-group input-group-merge">
                 <input
-                    wire:model="password"
+                    wire:model.live="password"
                     type="password"
                     class="form-control @error('password') is-invalid @enderror"
                     id="password"

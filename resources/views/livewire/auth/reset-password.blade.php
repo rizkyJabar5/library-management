@@ -82,7 +82,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         <div class="mb-6">
             <label for="email" class="form-label">{{ __('Email') }}</label>
             <input
-                wire:model="email"
+                wire:model.live="email"
                 type="email"
                 class="form-control @error('email') is-invalid @enderror"
                 id="email"
@@ -99,7 +99,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <label class="form-label" for="password">{{ __('New Password') }}</label>
             <div class="input-group input-group-merge">
                 <input
-                    wire:model="password"
+                    wire:model.live="password"
                     type="password"
                     class="form-control @error('password') is-invalid @enderror"
                     id="password"
@@ -118,7 +118,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             <label class="form-label" for="password_confirmation">{{ __('Confirm Password') }}</label>
             <div class="input-group input-group-merge">
                 <input
-                    wire:model="password_confirmation"
+                    wire:model.live="password_confirmation"
                     type="password"
                     class="form-control @error('password_confirmation') is-invalid @enderror"
                     id="password_confirmation"

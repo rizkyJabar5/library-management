@@ -60,7 +60,7 @@ new  class extends Component {
         <div class="mb-6">
             <label for="name" class="form-label">{{ __('Name') }}</label>
             <input
-                wire:model="name"
+                wire:model.live="name"
                 type="text"
                 class="form-control @error('name') is-invalid @enderror"
                 id="name"
@@ -77,7 +77,7 @@ new  class extends Component {
         <div class="mb-6">
             <label for="email" class="form-label">{{ __('Email') }}</label>
             <input
-                wire:model="email"
+                wire:model.live="email"
                 type="email"
                 class="form-control @error('email') is-invalid @enderror"
                 id="email"
@@ -94,7 +94,7 @@ new  class extends Component {
             <label class="form-label" for="password">{{ __('Password') }}</label>
             <div class="input-group input-group-merge">
                 <input
-                    wire:model="password"
+                    wire:model.live="password"
                     type="password"
                     class="form-control @error('password') is-invalid @enderror"
                     id="password"
@@ -113,7 +113,7 @@ new  class extends Component {
             <label class="form-label" for="password_confirmation">{{ __('Confirm Password') }}</label>
             <div class="input-group input-group-merge">
                 <input
-                    wire:model="password_confirmation"
+                    wire:model.live="password_confirmation"
                     type="password"
                     class="form-control @error('password_confirmation') is-invalid @enderror"
                     id="password_confirmation"
@@ -130,7 +130,7 @@ new  class extends Component {
 
         <div class="mb-8">
             <div class="form-check mb-0 ms-2">
-                <input wire:model="terms" type="checkbox" class="form-check-input @error('terms') is-invalid @enderror" id="terms">
+                <input wire:model.live="terms" type="checkbox" class="form-check-input @error('terms') is-invalid @enderror" id="terms">
                 <label class="form-check-label" for="terms">
                     {{ __('I agree to') }}
                     <a href="javascript:void(0);">{{ __('privacy policy & terms') }}</a>

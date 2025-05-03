@@ -50,7 +50,7 @@ new class extends Component {
                     <form wire:submit="deleteUser" class="space-y-3">
                         <div class="mb-3">
                             <label for="password" class="form-label">{{ __('Password') }}</label>
-                            <input type="password" id="password" wire:model="password" class="form-control" required />
+                            <input type="password" id="password" wire:model.live="password" class="form-control" required />
                         </div>
 
                         <div class="d-flex justify-content-between">
