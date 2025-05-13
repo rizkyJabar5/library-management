@@ -2,32 +2,47 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Observers\UserObserver;
+use Filament\AvatarProviders\UiAvatarsProvider;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+#[ObservedBy(UserObserver::class)]
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role_id',
+        'status',
+        'address',
+        'phone',
+        'avatar_url',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -35,31 +50,72 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'status' => 'boolean',
+    ];
+
+    public function role(): BelongsTo
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->belongsTo(Role::class);
     }
 
-    /**
-     * Get the user's initials
-     */
-    public function initials(): string
+    public function canAccessPanel(Panel $panel): bool
     {
-        return Str::of($this->name)
-            ->explode(' ')
-            ->map(fn (string $name) => Str::of($name)->substr(0, 1))
-            ->implode('');
+        $role = auth()->user()->role->name;
+
+        return match ($panel->getId()) {
+            'admin' => $role == 'admin' || $role == 'student',
+            default => false,
+        };
     }
 
-    public function books()
+    public function isAdmin(): bool
     {
-        return $this->hasMany(Books::class);
+        return $this->role->name === Role::IS_ADMIN;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        $uiAvatarsProvider = new UiAvatarsProvider();
+
+        if ($this->avatar_url) {
+            return Storage::url($this->avatar_url);
+        }
+
+        // If avatar_url is not available, use the UiAvatarsProvider directly
+        return $uiAvatarsProvider->get($this);
+    }
+
+    public static function booted(): void
+    {
+        parent::boot();
+
+        static::created(function ($model) {
+            $cacheKey = 'NavigationCount_'.class_basename($model).$model->getTable();
+            if (Cache::has($cacheKey)) {
+                Cache::forget($cacheKey);
+            }
+            $borrowerKey = 'BorrowerCount_'.class_basename($model).$model->getTable();
+            if (Cache::has($borrowerKey)) {
+                Cache::forget($borrowerKey);
+            }
+        });
+
+        static::deleted(function ($model) {
+            $cacheKey = 'NavigationCount_'.class_basename($model).$model->getTable();
+            if (Cache::has($cacheKey)) {
+                Cache::forget($cacheKey);
+            }
+            $borrowerKey = 'BorrowerCount_'.class_basename($model).$model->getTable();
+            if (Cache::has($borrowerKey)) {
+                Cache::forget($borrowerKey);
+            }
+        });
     }
 }
