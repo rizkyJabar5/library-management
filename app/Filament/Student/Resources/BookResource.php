@@ -167,6 +167,11 @@ class BookResource extends Resource
                             'bookId' => $record->id,
                             'userId' => auth()->id()]))
                     )
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['user_id'] = auth()->id();
+
+                        return $data;
+                    })
             ]);
     }
 
@@ -184,33 +189,5 @@ class BookResource extends Resource
 //            'create' => Pages\CreateBook::route('/create'),
 //            'edit' => Pages\EditBook::route('/{record}/edit'),
         ];
-    }
-
-    protected function borrowBook($book): void
-    {
-        // Check if the book is available
-        if (!$book->available) {
-            Notification::make()
-                ->title('Borrowed a book')
-                ->icon('heroicon-o-user')
-                ->info();
-            return;
-        }
-
-        // Create a new transaction record (observer will handle book availability)
-        \App\Models\Transaction::create([
-            'book_id' => $book->id,
-            'user_id' => auth()->id(),
-            'borrowed_date' => now(),
-            'borrowed_for' => 14, // Default borrowing period (14 days)
-            'status' => \App\Enums\BorrowedStatus::Borrowed,
-        ]);
-
-        // Success notification
-        Notification::make()
-            ->title(auth()->user()->name . ' Borrowed a book')
-            ->icon('heroicon-o-user')
-            ->info()
-            ->sendToDatabase($this->admin);
     }
 }

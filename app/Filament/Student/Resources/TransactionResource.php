@@ -74,6 +74,7 @@ class TransactionResource extends Resource
                                             ->searchable()
                                             ->preload()
                                             ->label('Borrower')
+                                            ->disabled()
                                             ->required(),
                                         Select::make('book_id')
                                             ->options(fn () => Book::whereAvailable(true)
@@ -188,7 +189,7 @@ class TransactionResource extends Resource
     {
         return [
             'index' => Pages\ListTransactions::route('/'),
-            'create' => Pages\CreateTransaction::route('/create/{bookId?}/{userId?}'),
+            'create' => Pages\CreateTransaction::route('/create'),
         ];
     }
 }

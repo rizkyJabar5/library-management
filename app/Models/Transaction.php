@@ -31,6 +31,7 @@ class Transaction extends Model
         'borrowed_date' => 'date',
         'returned_date' => 'date',
         'fine' => 'integer',
+        'borrowed_for' => 'integer',
     ];
 
     public function book(): BelongsTo
