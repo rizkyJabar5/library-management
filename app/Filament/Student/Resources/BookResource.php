@@ -3,9 +3,12 @@
 namespace App\Filament\Student\Resources;
 
 use App\Filament\Student\Resources\BookResource\Pages;
+use App\Filament\Student\Resources\TransactionResource\Pages\CreateTransaction;
 use App\Http\Traits\NavigationCount;
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Transaction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
@@ -18,6 +21,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\ActionGroup;
@@ -31,6 +35,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
@@ -156,9 +161,17 @@ class BookResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
-                ->modalSubmitAction(fn($action) => $action
-                    ->label('Borrow Book')
-                )
+                    ->modalSubmitAction(fn($action) => $action
+                        ->label('Borrow Book')
+                        ->url(fn (Book $record): string => TransactionResource::getUrl('create', [
+                            'bookId' => $record->id,
+                            'userId' => auth()->id()]))
+                    )
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['user_id'] = auth()->id();
+
+                        return $data;
+                    })
             ]);
     }
 

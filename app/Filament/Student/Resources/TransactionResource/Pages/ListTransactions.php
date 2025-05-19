@@ -12,36 +12,20 @@ class ListTransactions extends ListRecords
 {
     protected static string $resource = TransactionResource::class;
 
-//    protected function getHeaderActions(): array
-//    {
-//        return [
-//            Actions\CreateAction::make(),
-//        ];
-//    }
-
     public function getTabs(): array
     {
         return [
-            'All' => Tab::make(),
+            'All' => Tab::make()
+                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())),
             'Borrowed' => Tab::make()
-                ->modifyQueryUsing(fn ($query) => $query->whereStatus(BorrowedStatus::Borrowed)),
+                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())
+                    ->whereStatus(BorrowedStatus::Borrowed)),
             'Returned' => Tab::make()
-                ->modifyQueryUsing(fn ($query) => $query->whereStatus(BorrowedStatus::Returned)),
+                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())
+                    ->whereStatus(BorrowedStatus::Returned)),
             'Delayed' => Tab::make()
-                ->modifyQueryUsing(fn ($query) => $query->whereStatus(BorrowedStatus::Delayed)),
+                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())
+                    ->whereStatus(BorrowedStatus::Delayed)),
         ];
-//        return [
-//            'All' => Tab::make()
-//                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())),
-//            'Borrowed' => Tab::make()
-//                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())
-//                    ->whereStatus(BorrowedStatus::Borrowed)),
-//            'Returned' => Tab::make()
-//                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())
-//                    ->whereStatus(BorrowedStatus::Returned)),
-//            'Delayed' => Tab::make()
-//                ->modifyQueryUsing(fn($query) => $query->where('user_id', auth()->id())
-//                    ->whereStatus(BorrowedStatus::Delayed)),
-//        ];
     }
 }
