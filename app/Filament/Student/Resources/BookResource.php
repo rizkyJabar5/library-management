@@ -3,9 +3,12 @@
 namespace App\Filament\Student\Resources;
 
 use App\Filament\Student\Resources\BookResource\Pages;
+use App\Filament\Student\Resources\TransactionResource\Pages\CreateTransaction;
 use App\Http\Traits\NavigationCount;
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Transaction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
@@ -18,6 +21,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables\Actions\ActionGroup;
@@ -31,6 +35,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
@@ -156,9 +161,12 @@ class BookResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
-                ->modalSubmitAction(fn($action) => $action
-                    ->label('Borrow Book')
-                )
+                    ->modalSubmitAction(fn($action) => $action
+                        ->label('Borrow Book')
+                        ->url(fn (Book $record): string => TransactionResource::getUrl('create', [
+                            'bookId' => $record->id,
+                            'userId' => auth()->id()]))
+                    )
             ]);
     }
 
@@ -176,5 +184,33 @@ class BookResource extends Resource
 //            'create' => Pages\CreateBook::route('/create'),
 //            'edit' => Pages\EditBook::route('/{record}/edit'),
         ];
+    }
+
+    protected function borrowBook($book): void
+    {
+        // Check if the book is available
+        if (!$book->available) {
+            Notification::make()
+                ->title('Borrowed a book')
+                ->icon('heroicon-o-user')
+                ->info();
+            return;
+        }
+
+        // Create a new transaction record (observer will handle book availability)
+        \App\Models\Transaction::create([
+            'book_id' => $book->id,
+            'user_id' => auth()->id(),
+            'borrowed_date' => now(),
+            'borrowed_for' => 14, // Default borrowing period (14 days)
+            'status' => \App\Enums\BorrowedStatus::Borrowed,
+        ]);
+
+        // Success notification
+        Notification::make()
+            ->title(auth()->user()->name . ' Borrowed a book')
+            ->icon('heroicon-o-user')
+            ->info()
+            ->sendToDatabase($this->admin);
     }
 }
